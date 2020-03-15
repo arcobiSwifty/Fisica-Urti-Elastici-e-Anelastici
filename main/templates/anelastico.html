@@ -1,0 +1,120 @@
+{% load static %}
+
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Urto Anelastico</title>
+    <link rel="stylesheet" href="{% static 'css/uikit.min.css' %}" />
+    <script src="{% static 'js/uikit.min.js' %}"></script>
+    <script src="{% static 'js/uikit-icons.min.js' %}"></script>
+  </head>
+  <body>
+    <style media="screen">
+      .corpo {
+        width: 100px;
+        height: 50px;
+        display: block;
+      }
+      #corpo1 {
+        background-color: red;
+        position: absolute;
+        left: 50px;
+      }
+      #corpo2 {
+        background-color: blue;
+        position: absolute;
+        right: 50px;
+      }
+      #terra {
+        display: block;
+        background-color: brown;
+        height: 10px;
+        position: absolute;
+      }
+    </style>
+
+
+    <div class="uk-container uk-margin">
+      <h1>Urto Anelastico</h1>
+      <form class="uk-form uk-grid-small" method="post" uk-grid>
+        <div class="uk-width-1-2 uk-form-controls">
+          <label >Massa corpo 1</label>
+          <input type="number" id="massa1" value="5.00" id="massa_corpo1" class="uk-input">
+        </div>
+        <div class="uk-width-1-2 uk-form-controls">
+          <label >Velocità corpo 1</label>
+          <input type="number" id="velocita1" value="6.00" id="velocità_corpo1" class="uk-input">
+        </div>
+        <div class="uk-width-1-2 uk-form-controls">
+          <label >Massa corpo 2</label>
+          <input type="number" id="massa2" value="5.00" id="massa_corpo2" class="uk-input">
+        </div>
+        <div class="uk-width-1-2 uk-form-controls">
+          <label >Velocità corpo 2</label>
+          <input type="number" id="velocita2" value="6.00" id="velocità_corpo2" class="uk-input">
+        </div>
+        <button type="button" name="button" class="uk-button uk-button-primary" onclick="simulazione()">Inizia simulazione</button>
+        <a href="/anelastico" class="uk-button uk-button-danger">Resetta</a>
+      </form>
+      </div>
+      <br><br><br><br>
+      <br><br><br><br>
+      <div id="corpo1" class="corpo">
+
+      </div>
+      <div id="corpo2" class="corpo">
+
+      </div>
+      <div class="uk-width-1-1" id="terra"></div>
+      <br><br><br><br><br>
+      <div class="uk-container uk-margin">
+      <p id="velocita"></p>
+      </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script type="text/javascript">
+        $( document ).ready(function() {
+          var corpo1 = $("#corpo1")
+          var posizione = corpo1.position().top
+          var altezza = posizione + corpo1.height()
+          $("#terra").css("top", altezza)
+      });
+      function simulazione() {
+        var massa_corpo1 = $("#massa1").val()
+        var massa_corpo2 = $("#massa2").val()
+        var velocita_corpo1 = $("#velocita1").val()
+        var velocita_corpo2 = $("#velocita2").val()
+        var corpo1 = $("#corpo1")
+        var corpo2 = $("#corpo2")
+        const interval = setInterval(function() {
+          var posizione1 = corpo1.position().left
+          var posizione2 = corpo2.position().left
+          if ((posizione2 - posizione1 - 100) < 0) {
+            clearInterval(interval);
+            urto_Anelastico(massa_corpo1, massa_corpo2, velocita_corpo1, velocita_corpo2)
+          }
+          corpo1.css("left", posizione1 + velocita_corpo1/3)
+          corpo2.css("left", posizione2 - velocita_corpo2/3)
+        }, 20); //50fps
+      }
+      function urto_Anelastico(m1, m2, v1, v2) {
+        var corpo1 = $("#corpo1")
+        var corpo2 = $("#corpo2")
+        m1 = parseInt(m1)
+        m2 = parseInt(m2)
+        var velocita_f = (m1 * v1 - m2 * v2) / (m1 + m2)
+        $("#velocita").html("velocita finale corpi: " + velocita_f)
+
+        const interval = setInterval(function() {
+
+          var posizione1 = corpo1.position().left
+          var posizione2 = corpo2.position().left
+          corpo1.css("left", posizione1 + velocita_f/3)
+          corpo2.css("left", posizione2 + velocita_f/3)
+        }, 20); //50fps
+      }
+      </script>
+
+  </body>
+</html>
